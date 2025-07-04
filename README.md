@@ -1,23 +1,100 @@
-<<<<<<< HEAD
-## Getting Started
+# 💰 Smart Budget Expense Tracker
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A simple yet powerful command-line-based Java application that helps users manage their income, expenses, and budgets efficiently.
 
-## Folder Structure
+## 🚀 Features
 
-The workspace contains two folders by default, where:
+- ✅ Add income with category and amount
+- ✅ Add expense with category and amount
+- ✅ View total income and expenses
+- ✅ Calculate remaining budget
+- ✅ Check if you're over budget
+- ✅ View all transactions
+- 💾 Persist data using local file storage (`data.txt`)
 
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
+## 🛠️ Technologies Used
 
-Meanwhile, the compiled output files will be generated in the `bin` folder by default.
+- Java (OOP, Abstraction, Encapsulation, Polymorphism)
+- Java Collections (ArrayList, List)
+- File I/O for data persistence
+- Modular structure using `models`, `services`
 
-> If you want to customize the folder structure, open `.vscode/settings.json` and update the related settings there.
+## 📁 Project Structure
 
-## Dependency Management
+smart-budget-expense-tracker/
+│
+├── models/
+│ ├── User.java
+│ ├── Budget.java
+│ ├── Transaction.java
+│ ├── IncomeTransaction.java
+│ └── ExpenseTransaction.java
+│
+├── services/
+│ ├── TransactionService.java
+│ └── FileManager.java
+│
+├── data.txt // File to store transaction data
+└── Main.java // Entry point
 
-The `JAVA PROJECTS` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-dependency#manage-dependencies).
-=======
-# Smart-Budget-Expense-Tracker
-Track income and expenses with smart budget insights using Java
->>>>>>> e02a7b137e7f22869ea8949d1b6b82014d0940b2
+bash
+Copy
+Edit
+
+## 🧑‍💻 How to Run
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/Ramesh-Gandreddi/Smart-Budget-Expense-Tracker.git
+   cd Smart-Budget-Expense-Tracker
+Compile the project
+
+bash
+Copy
+Edit
+javac Main.java models/*.java services/*.java
+Run the application
+
+bash
+Copy
+Edit
+java Main
+Start tracking your budget!
+
+📦 Sample Demo (Console UI)
+sql
+Copy
+Edit
+ Smart Budget Expense Tracker
+1. Add Income
+2. Add Expense
+3. View Total Income
+4. View Total Expense
+5. View Remaining Budget
+6. Check Over Budget
+7. View All Transactions
+8. Exit
+Select option: 
+📌 Future Enhancements
+GUI-based interface (JavaFX or Spring Boot Web)
+
+Category-wise analytics
+
+User authentication
+
+Export reports to PDF/CSV
+
+🧠 Learning Outcome
+This project demonstrates practical use of:
+
+Low-Level Design principles
+
+Clean code structure with OOP
+
+Modular Java application with file persistence
+
+Real-world console-based user interaction
+
+📝 Author
+Ramesh Gandreddi
+🔗 GitHub Profile
