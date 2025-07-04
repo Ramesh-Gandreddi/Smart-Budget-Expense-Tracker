@@ -14,7 +14,7 @@ public class ExpenseTransaction extends Transaction {
     public String getType() {
         return "Expense";
     }
-
+@Override
     public String getCategory() {
         return category;
     }

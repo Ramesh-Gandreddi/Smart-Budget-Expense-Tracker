@@ -18,4 +18,5 @@ public abstract class Transaction {
         return date;
     }
     public abstract String getType(); // "Income" or "Expense"
+      public abstract String getCategory(); 
 }

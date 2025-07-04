@@ -2,19 +2,27 @@ package models;
 
 import java.time.LocalDate;
 
-public class Income extends Transaction {
-    private String source;  // Optional: e.g., "Salary", "Freelancing"
+public class Income {
+    private String source;
+    private double amount;
+    private String category;
 
-    public Income(double amount, LocalDate date, String source){
-        super(amount,date);
+    public Income(String source, double amount, String category) {
         this.source = source;
+        this.amount = amount;
+        this.category = category;
     }
-    public String getSource(){
+
+    public String getSource() {
         return source;
     }
 
-    @Override
-    public String getType(){
-        return "income";
+    public double getAmount() {
+        return amount;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }
+
