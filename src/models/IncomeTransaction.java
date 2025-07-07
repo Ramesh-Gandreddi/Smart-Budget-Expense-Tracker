@@ -18,5 +18,9 @@ public class IncomeTransaction extends Transaction {
     public String getCategory() {
         return category;
     }
+    @Override
+public String toString() {
+    return "[Income] " + getDate() + " | " + getCategory() + " | " + getAmount();
+}
 }
 

@@ -14,7 +14,7 @@ public class BudgetService {
 
     public void addTranction(Transaction t) {
         transactions.add(t);
-        saveTransactionToFile(t); // 👈 Add this line
+        saveTransactionToFile(t); 
     }
 
     public double getTotalIncome() {
@@ -49,7 +49,7 @@ public class BudgetService {
             writer.write(data);
             writer.newLine();
         } catch (Exception e) {
-            System.out.println("❌ Error writing transaction to file: " + e.getMessage());
+            System.out.println(" Error writing transaction to file: " + e.getMessage());
         }
     }
 }

@@ -17,6 +17,9 @@ public abstract class Transaction {
     public LocalDate getDate(){
         return date;
     }
+    
     public abstract String getType(); // "Income" or "Expense"
       public abstract String getCategory(); 
+
+      
 }

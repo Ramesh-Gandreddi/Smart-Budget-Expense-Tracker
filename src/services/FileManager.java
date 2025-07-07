@@ -4,7 +4,6 @@ import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.Buffer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +20,7 @@ public class FileManager {
 
     try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
         for (Transaction t : transactions) {
-            writer.write(t.getType() + "," + t.getAmount() + "," + t.getDate() + "," + t.getCategory());
+            writer.write(t.getType() + ", " + t.getAmount() + ", " + t.getDate() + ", " + t.getCategory());
             writer.newLine();
         }
     } catch (IOException e) {
@@ -54,5 +53,14 @@ public class FileManager {
         }
         return transactions;
     }
+    public static void clearTransactionFile() {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(FILE_NAME))) {
+        // Just overwrite with nothing
+        writer.write("");
+    } catch (IOException e) {
+        e.printStackTrace();
+    }
+}
+
     }
 

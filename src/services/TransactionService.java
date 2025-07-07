@@ -1,5 +1,6 @@
 package services;
 
+import java.time.LocalDate;
 import java.util.List;
 import models.Budget;
 import models.Transaction;
@@ -14,6 +15,10 @@ public class TransactionService {
         this.user = user;
         this.budget = budget;
         this.transactions = FileManager.loadTransactions(); // Load from file initially
+
+        for (Transaction transaction : transactions) {
+        user.addTranction(transaction);
+    }
     }
 
     public void addTranction(Transaction transaction) {
@@ -41,4 +46,17 @@ public class TransactionService {
     public List<Transaction> getAllTranctions() {
         return user.getTransactions();
     }
+    public List<Transaction> getTransactionsForCurrentMonth() {
+    LocalDate now = LocalDate.now();
+    return transactions.stream()
+            .filter(t -> t.getDate().getMonth() == now.getMonth() && t.getDate().getYear() == now.getYear())
+            .toList();
+}
+    public void resetAllData() {
+    transactions.clear();
+    user.getTransactions().clear();
+    FileManager.saveTransactions(transactions);
+    System.out.println("All data has been reset.");
+}
+
 }
