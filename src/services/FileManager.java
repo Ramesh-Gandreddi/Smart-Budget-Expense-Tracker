@@ -38,7 +38,8 @@ public class FileManager {
                 if (parts.length == 4) {
                     String type = parts[0];
                     double amount = Double.parseDouble(parts[1]);
-                    LocalDate date = LocalDate.parse(parts[2]);
+                   LocalDate date = LocalDate.parse(parts[2].trim());
+
                     String category = parts[3];
 
                     if (type.equals("Income")) {

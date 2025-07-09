@@ -1,3 +1,6 @@
+
+
+
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Scanner;
@@ -48,7 +51,7 @@ public class Main {
                     String category = sc.nextLine();
 
                     Transaction income = new IncomeTransaction(amount, LocalDate.now(), category);
-                    service.addTranction(income);
+                    service.addTransaction(income);
                     System.out.println(" Income added successfully!");
                     break;
                 }
@@ -61,7 +64,7 @@ public class Main {
                     String category = sc.nextLine();
 
                     Transaction expense = new ExpenseTransaction(amount, LocalDate.now(), category);
-                    service.addTranction(expense);
+                    service.addTransaction(expense);
                     System.out.println(" Expense recorded successfully!");
                     break;
                 }
