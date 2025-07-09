@@ -37,9 +37,10 @@ smart-budget-expense-tracker/
 ├── data.txt // File to store transaction data
 └── Main.java // Entry point
 
-bash
-Copy
-Edit
+# Setup Notes
+- Place your `mysql-connector-java-x.x.xx.jar` in a `lib/` folder.
+- If needed, configure `.vscode/settings.json` with Java SDK path.
+
 
 ## 🧑‍💻 How to Run
 
