@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class IncomeTransaction extends Transaction {
     private String category;
 
-    public IncomeTransaction(double amount, LocalDate date, String category) {
+    public IncomeTransaction(double amount, LocalDate date,String category ) {
         super(amount, date);
         this.category = category;
     }

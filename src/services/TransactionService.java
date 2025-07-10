@@ -2,10 +2,13 @@ package services;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import models.Budget;
+import models.ExpenseTransaction;
 import models.IncomeTransaction;
 import models.Transaction;
 import models.User;
@@ -18,7 +21,7 @@ public class TransactionService {
     public TransactionService(User user, Budget budget) {
         this.user = user;
         this.budget = budget;
-        this.transactions = FileManager.loadTransactions(); // Load from file initially
+       this.transactions = FileManager.loadTransactions(); // Load from file initially
 
         for (Transaction transaction : transactions) {
             user.addTranction(transaction);
@@ -43,11 +46,36 @@ public class TransactionService {
     }
 
     public double getTotalIncome() {
-        return user.getTotalIncome();
+        double totalIncome = 0.0;
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            String query = "SELECT SUM(amount) FROM transactions WHERE type = 'INCOME'";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                var rs = stmt.executeQuery();
+                if (rs.next()) {
+                    totalIncome = rs.getDouble(1); // column 1: SUM(amount)
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalIncome;
     }
 
     public double getTotalExpense() {
-        return user.getTotalExpense();
+        double totalExpense = 0.0;
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            String query = "SELECT SUM(amount) FROM transactions WHERE type = 'EXPENSE'";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                var rs = stmt.executeQuery();
+                if (rs.next()) {
+                    totalExpense = rs.getDouble(1);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return totalExpense;
+
     }
 
     public double getRemainingBudget() {
@@ -58,8 +86,33 @@ public class TransactionService {
         return budget.isOverBudget(getTotalExpense());
     }
 
-    public List<Transaction> getAllTranctions() {
-        return user.getTransactions();
+    public List<Transaction> listAllTransactionsFromDB() {
+        List<Transaction> dbTransactions = new ArrayList<>();
+
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            String query = "SELECT amount, date, category, type FROM transactions";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                var rs = stmt.executeQuery();
+                while (rs.next()) {
+                    double amount = rs.getDouble("amount");
+                    LocalDate date = LocalDate.parse(rs.getString("date"));
+                    String category = rs.getString("category");
+                    String type = rs.getString("type");
+
+                    Transaction t;
+                    if ("INCOME".equalsIgnoreCase(type)) {
+                        t = new IncomeTransaction(amount, date, category);
+                    } else {
+                        t = new ExpenseTransaction(amount, date, category);
+                    }
+                    dbTransactions.add(t);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return dbTransactions;
     }
 
     public List<Transaction> getTransactionsForCurrentMonth() {
@@ -70,10 +123,18 @@ public class TransactionService {
     }
 
     public void resetAllData() {
+        try (Connection conn = DatabaseConfig.getConnection()) {
+            String query = "DELETE FROM transactions";
+            try (PreparedStatement stmt = conn.prepareStatement(query)) {
+                stmt.executeUpdate();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         transactions.clear();
-        user.getTransactions().clear();
-        FileManager.saveTransactions(transactions);
-        System.out.println("All data has been reset.");
+        user.clearTransactions();
+        System.out.println("All data has been deleted from database.");
     }
 
 }

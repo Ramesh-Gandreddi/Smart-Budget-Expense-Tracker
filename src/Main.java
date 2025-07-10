@@ -89,7 +89,7 @@ public class Main {
 
                 case 6: {
                     System.out.println("All Transactions:");
-                    List<Transaction> transactions = service.getAllTranctions();
+                    List<Transaction> transactions = service.listAllTransactionsFromDB();
 
                     if (transactions.isEmpty()) {
                         System.out.println(" No transactions recorded yet.");
