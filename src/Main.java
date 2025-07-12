@@ -1,7 +1,7 @@
 
-
-
 import java.time.LocalDate;
+import java.time.YearMonth;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Scanner;
 
@@ -33,8 +33,10 @@ public class Main {
             System.out.println("6. View All Transactions");
             System.out.println("7. Check Over Budget");
             System.out.println("8. Exit");
-            System.out.println("9. View Current Month Transactions");
+            System.out.println("9. Show Monthly Summary");
             System.out.println("10. Reset All Data");
+            System.out.println("11. Filter by Category");
+            System.out.println("12. Filter by Date Range");
             System.out.print("Select option: ");
 
             int choice = sc.nextInt();
@@ -118,15 +120,24 @@ public class Main {
                     break;
                 }
                 case 9: {
-                    System.out.println("Transactions for Current Month:");
-                    List<Transaction> currentMonthTxns = service.getTransactionsForCurrentMonth();
-                    if (currentMonthTxns.isEmpty()) {
-                        System.out.println("No transactions found for this month.");
-                    } else {
-                        for (Transaction t : currentMonthTxns) {
-                            System.out.println(t);
-                        }
-                    }
+                    double income = service.getMonthlyIncome();
+                    double expense = service.getMonthlyExpense();
+                    double balance = income - expense;
+
+                    YearMonth currentMonth = YearMonth.now();
+                    LocalDate start = currentMonth.atDay(1);
+                    LocalDate end = currentMonth.atEndOfMonth();
+
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy"); // e.g., 01 July 2025
+
+                    System.out.println("==== Monthly Summary (" + currentMonth.getMonth() + " " + currentMonth.getYear()
+                            + ") ====");
+                    System.out.println("From: " + start.format(formatter));
+                    System.out.println("To  : " + end.format(formatter));
+                    System.out.println("-----------------------------");
+                    System.out.println("Income  : " + income);
+                    System.out.println("Expense : " + expense);
+                    System.out.println("Balance : " + balance);
                     break;
                 }
                 case 10: {
@@ -137,6 +148,40 @@ public class Main {
                     } else {
                         System.out.println("Reset canceled.");
                     }
+                    break;
+                }
+                case 11: {
+                    System.out.print("Enter category to filter (e.g., Food, Rent): ");
+                    String category = sc.nextLine();
+                    List<Transaction> filtered = service.filterTransactionsByCategory(category);
+
+                    if (filtered.isEmpty()) {
+                        System.out.println("No transactions found in this category.");
+                    } else {
+                        filtered.forEach(System.out::println);
+                    }
+                    break;
+                }
+                case 12: {
+                    System.out.print("Enter start date (yyyy-MM-dd): ");
+                    String start = sc.nextLine();
+                    System.out.print("Enter end date (yyyy-MM-dd): ");
+                    String end = sc.nextLine();
+
+                    try {
+                        LocalDate from = LocalDate.parse(start);
+                        LocalDate to = LocalDate.parse(end);
+                        List<Transaction> filtered = service.filterTransactionsByDateRange(from, to);
+
+                        if (filtered.isEmpty()) {
+                            System.out.println("No transactions found in this date range.");
+                        } else {
+                            filtered.forEach(System.out::println);
+                        }
+                    } catch (Exception e) {
+                        System.out.println("Invalid date format. Use yyyy-MM-dd.");
+                    }
+
                     break;
                 }
 
