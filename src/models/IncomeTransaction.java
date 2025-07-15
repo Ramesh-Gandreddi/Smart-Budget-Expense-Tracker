@@ -18,9 +18,10 @@ public class IncomeTransaction extends Transaction {
     public String getCategory() {
         return category;
     }
-    @Override
+   @Override
 public String toString() {
-    return "[Income] " + getDate() + " | " + getCategory() + " | " + getAmount();
+    return String.format("[Income] ID: %d | %s | %.2f | %s", getId(), getDate(), getAmount(), getCategory());
 }
+
 }
 

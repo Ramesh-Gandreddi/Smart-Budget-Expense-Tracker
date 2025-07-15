@@ -89,34 +89,44 @@ public class TransactionService {
         return budget.isOverBudget(getTotalExpense());
     }
 
-    public List<Transaction> listAllTransactionsFromDB() {
-        List<Transaction> dbTransactions = new ArrayList<>();
+   public List<Transaction> listAllTransactionsFromDB() {
+    List<Transaction> dbTransactions = new ArrayList<>();
 
-        try (Connection conn = DatabaseConfig.getConnection()) {
-            String query = "SELECT amount, date, category, type FROM transactions";
-            try (PreparedStatement stmt = conn.prepareStatement(query)) {
-                var rs = stmt.executeQuery();
-                while (rs.next()) {
-                    double amount = rs.getDouble("amount");
-                    LocalDate date = LocalDate.parse(rs.getString("date"));
-                    String category = rs.getString("category");
-                    String type = rs.getString("type");
+    try (Connection conn = DatabaseConfig.getConnection()) {
+        //  Add id in SELECT query
+        String query = "SELECT id, amount, date, category, type FROM transactions";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(query)) {
+            var rs = stmt.executeQuery();
 
-                    Transaction t;
-                    if ("INCOME".equalsIgnoreCase(type)) {
-                        t = new IncomeTransaction(amount, date, category);
-                    } else {
-                        t = new ExpenseTransaction(amount, date, category);
-                    }
-                    dbTransactions.add(t);
+            while (rs.next()) {
+                int id = rs.getInt("id"); // Get ID from DB
+                double amount = rs.getDouble("amount");
+                LocalDate date = LocalDate.parse(rs.getString("date"));
+                String category = rs.getString("category");
+                String type = rs.getString("type");
+
+                Transaction t;
+
+                if ("INCOME".equalsIgnoreCase(type)) {
+                    t = new IncomeTransaction(amount, date, category);
+                } else {
+                    t = new ExpenseTransaction(amount, date, category);
                 }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
-        return dbTransactions;
+                t.setId(id); // Set ID to the object
+                
+
+                dbTransactions.add(t);
+            }
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
     }
+
+    return dbTransactions;
+}
+
 
     public List<Transaction> getTransactionsForCurrentMonth() {
         LocalDate now = LocalDate.now();
@@ -127,7 +137,7 @@ public class TransactionService {
 
     public void resetAllData() {
         try (Connection conn = DatabaseConfig.getConnection()) {
-            String query = "DELETE FROM transactions";
+            String query = "TRUNCATE TABLE transactions";
             try (PreparedStatement stmt = conn.prepareStatement(query)) {
                 stmt.executeUpdate();
             }
@@ -174,7 +184,7 @@ public class TransactionService {
         List<Transaction> transactions = new ArrayList<>();
         String query = "SELECT * FROM transactions WHERE category = ?";
 
-        try (Connection conn =  DatabaseConfig.getConnection();
+        try (Connection conn = DatabaseConfig.getConnection();
                 PreparedStatement stmt = conn.prepareStatement(query)) {
 
             stmt.setString(1, category);
@@ -210,17 +220,73 @@ public class TransactionService {
 
         return transactions;
     }
-    private Transaction createTransactionFromResultSet(ResultSet rs) throws SQLException {
-    int id = rs.getInt("id");
-    double amount = rs.getDouble("amount");
-    LocalDate date = rs.getDate("date").toLocalDate();
-    String category = rs.getString("category");
-    String type = rs.getString("type");
 
-    if ("income".equalsIgnoreCase(type)) {
-        return new IncomeTransaction(amount, date, category);
-    } else {
-        return new ExpenseTransaction(amount, date, category);
+    private Transaction createTransactionFromResultSet(ResultSet rs) throws SQLException {
+        int id = rs.getInt("id");
+        double amount = rs.getDouble("amount");
+        LocalDate date = rs.getDate("date").toLocalDate();
+        String category = rs.getString("category");
+        String type = rs.getString("type");
+
+        if ("income".equalsIgnoreCase(type)) {
+            return new IncomeTransaction(amount, date, category);
+        } else {
+            return new ExpenseTransaction(amount, date, category);
+        }
+    }
+
+    public List<Transaction> listAllTransactionsWithIDs() {
+        List<Transaction> transactions = new ArrayList<>();
+        String query = "SELECT id, amount, date, category, type FROM transactions ORDER BY date DESC";
+        try (Connection conn = DatabaseConfig.getConnection();
+                PreparedStatement stmt = conn.prepareStatement(query);
+                ResultSet rs = stmt.executeQuery()) {
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+                double amount = rs.getDouble("amount");
+                LocalDate date = rs.getDate("date").toLocalDate();
+                String category = rs.getString("category");
+                String type = rs.getString("type");
+
+                Transaction t = type.equalsIgnoreCase("income")
+                        ? new IncomeTransaction(amount, date, category)
+                        : new ExpenseTransaction(amount, date, category);
+                t.setId(id); // You'll add this setId method in Transaction.java
+                transactions.add(t);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return transactions;
+    }
+    
+   public boolean updateTransaction(int id, double amount, String category, LocalDate date) {
+    String sql = "UPDATE transactions SET amount = ?, category = ?, date = ? WHERE id = ?";
+    try (Connection conn = DatabaseConfig.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(sql)) {
+        stmt.setDouble(1, amount);
+        stmt.setString(2, category);
+        stmt.setDate(3, Date.valueOf(date));
+        stmt.setInt(4, id);
+        int rowsAffected = stmt.executeUpdate();
+        return rowsAffected > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+    }
+    return false;
+}
+
+
+public boolean deleteTransaction(int id) {
+    String query = "DELETE FROM transactions WHERE id = ?";
+    try (Connection conn = DatabaseConfig.getConnection();
+         PreparedStatement stmt = conn.prepareStatement(query)) {
+        stmt.setInt(1, id);
+        return stmt.executeUpdate() > 0;
+    } catch (SQLException e) {
+        e.printStackTrace();
+        return false;
     }
 }
 

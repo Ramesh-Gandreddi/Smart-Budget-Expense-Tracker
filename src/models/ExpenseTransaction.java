@@ -18,9 +18,10 @@ public class ExpenseTransaction extends Transaction {
     public String getCategory() {
         return category;
     }
-    @Override
+   @Override
 public String toString() {
-    return "[Income] " + getDate() + " | " + getCategory() + " | " + getAmount();
+    return String.format("[Expense] ID: %d | %s | %.2f | %s", getId(), getDate(), getAmount(), getCategory());
 }
+
 }
 

@@ -37,6 +37,8 @@ public class Main {
             System.out.println("10. Reset All Data");
             System.out.println("11. Filter by Category");
             System.out.println("12. Filter by Date Range");
+            System.out.println("13. Update Transaction");
+            System.out.println("14. Delete Transaction");
             System.out.print("Select option: ");
 
             int choice = sc.nextInt();
@@ -98,6 +100,8 @@ public class Main {
                     } else {
                         for (Transaction t : transactions) {
                             System.out.println(t);
+                            
+                            
                         }
                     }
                     break;
@@ -182,6 +186,38 @@ public class Main {
                         System.out.println("Invalid date format. Use yyyy-MM-dd.");
                     }
 
+                    break;
+                }
+                case 13: {
+                    List<Transaction> transactions = service.listAllTransactionsWithIDs();
+                    transactions.forEach(System.out::println);
+
+                    System.out.print("Enter ID to update: ");
+                    int updateId = sc.nextInt();
+                    sc.nextLine();
+
+                    System.out.print("Enter new amount: ");
+                    double newAmount = sc.nextDouble();
+                    sc.nextLine();
+                    System.out.print("Enter new category: ");
+                    String newCategory = sc.nextLine();
+                    System.out.print("Enter new date (yyyy-mm-dd): ");
+                    LocalDate newDate = LocalDate.parse(sc.nextLine());
+
+                    boolean updated = service.updateTransaction(updateId, newAmount, newCategory, newDate);
+                    System.out.println(updated ? "Transaction updated!" : " Update failed.");
+                    break;
+                }
+                case 14: {
+                    List<Transaction> transactions = service.listAllTransactionsWithIDs();
+                    transactions.forEach(System.out::println);
+
+                    System.out.print("Enter ID to delete: ");
+                    int deleteId = sc.nextInt();
+                    sc.nextLine();
+
+                    boolean deleted = service.deleteTransaction(deleteId);
+                    System.out.println(deleted ? "🗑️ Transaction deleted!" : "❌ Delete failed.");
                     break;
                 }
 
